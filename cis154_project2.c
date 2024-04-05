@@ -7,21 +7,39 @@ Project 2
 
 #include <stdio.h>
 #include <time.h>
+#include <string.h>
 
 void clearScreen(void);
 int randomDecider(void);
-int generateRandomBurger(int randomBurgerOrder);
-int buildBurger(int array[], int magnitudeOfArray);
-void printBurger(int burgerOrder[], int magnitudeOfArray);
-int compareBurger(int a1[], int a2[], int a1Magnitude, int a2Magnitude);
-int calculateTools(int a1[], int a1Magnitude, int orderCorrectOrIncorrect);
+int* generateRandomBurger(int* randomBurgerOrder, int* count);
+int buildBurger(int* array, int cardinalityOfArray);
+void printBurger(int* burgerOrder, int cardinalityOfArray);
+int compareBurger(int* a1, int* a2, int a1Cardinality, int a2Cardinality);
+int calculateTools(int* a1, int a1Cardinality, int orderCorrectOrIncorrect);
 int playRound(void);
 
-int main(void)
+int main(void) 
 {
     srand(time(NULL));
-    int number = randomDecider();
-    printf("%d\n", number);
+    int totalScore = 0;
+    int userInput;
+    int iteration = 0;
+    printf("Want to play? (0 v 1): \n");
+    scanf("%d", &userInput);
+    while (userInput != 0 && userInput == 1) 
+    {
+        if (iteration != 0)
+        {
+            clearScreen();
+            iteration++;
+        }
+        totalScore += playRound();
+        printf("Total score: %d\n", totalScore);
+        printf("Play again? (0 v 1): \n");
+        scanf("%d", &userInput);
+    }
+    printf("Game over. Final score: %d\n", totalScore);
+    return 0;
 }
 
 void clearScreen(void)
@@ -38,35 +56,46 @@ int randomDecider(void)
     return randomNumber;
 }
 
-int generateRandomBurger(int randomBurgerOrder)
+int* generateRandomBurger(int* randomBurgerOrder, int* count)
 {
     int ingredientsOfBurger[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    int magnitudeOfArray = sizeof(ingredientsOfBurger) / sizeof(ingredientsOfBurger[0]);
+    int cardinalityOfBurger = sizeof(ingredientsOfBurger) / sizeof(ingredientsOfBurger[0]);
+    *count = 0;
+    for (int i = 0; i < cardinalityOfBurger; i++)
+    {
+        if (randomDecider() == 0)
+        {
+            continue;
+        }
+        randomBurgerOrder[*count] = ingredientsOfBurger[i];
+        (*count)++;
+    }
+    return count;
 }
 
-int buildBurger(int array[], int magnitudeOfArray)
+int buildBurger(int* array, int cardinalityOfArray) 
 {
-    for (int i = 0; i < magnitudeOfArray; i++)
+    for (int i = 0; i < cardinalityOfArray; i++) 
     {
         int userOrderInput;
-        puts("Enter integers between 0 - 10 to pick your ingredients of your burger:");
-        int userOrder = scanf("%d", &userOrderInput);
-        puts("");
-        if (userOrder < 0 || userOrder > 10)
+        printf("Pick your ingredients of your burger (0 - 10): \n");
+        scanf("%d", &userOrderInput);
+        if (userOrderInput < 0 || userOrderInput > 10) 
         {
-            puts("Error: Invalid Order. Enter a number between 0 - 10");
-        }
-        else
+            printf("Error: Invalid Order. Enter a number between 0 - 10\n");
+            i--;
+        } 
+        else 
         {
-            array[i] = userOrder;
+            array[i] = userOrderInput;
         }
     }
-    return magnitudeOfArray;
+    return cardinalityOfArray;
 }
 
-void printBurger(int burgerOrder[], int magnitudeOfArray)
+void printBurger(int* burgerOrder, int cardinalityOfArray)
 {
-    for (int i = 0; i < magnitudeOfArray; i++)
+    for (int i = 0; i < cardinalityOfArray; i++)
     {
         switch (burgerOrder[i])
         {
@@ -81,25 +110,47 @@ void printBurger(int burgerOrder[], int magnitudeOfArray)
             case 8: puts("Cheese"); break;
             case 9: puts("Patty"); break;
             case 10: puts("Bottom Bun"); break;
-            default: puts("If you're reading this, then this code is bugged.");
+            default: puts("If you're reading this, then your code is fucked.");
         }
     }
-    puts("");
 }
 
 
-int compareBurger(int a1[], int a2[], int a1Magnitude, int a2Magnitude)
+int compareBurger(int* a1, int* a2, int a1Cardinality, int a2Cardinality) 
 {
-
+    int counts[11] = {0};
+    for (int i = 0; i < a1Cardinality; i++) 
+    {
+        counts[a1[i]]++;
+    }
+    for (int i = 0; i < a2Cardinality; i++) 
+    {
+        if (--counts[a2[i]] < 0) 
+        {
+            return 0;
+        }
+    }
+    return 1;
 }
 
-int calculateTools(int a1[], int a1Magnitude, int orderCorrectOrIncorrect)
+int calculateTotals(int* burgerOrder, int cardinalityOfArray, int orderCorrectOrIncorrect) 
 {
-
+    int score = 0;
+    if (orderCorrectOrIncorrect) 
+    {
+        score++;
+    }
+    return score;
 }
 
 int playRound(void)
 {
-    int roundScore = 0;
+    int randomBurgerOrder[11];
+    int count;
+    generateRandomBurger(randomBurgerOrder, &count);
+    int userBurgerOrder[11];
+    buildBurger(userBurgerOrder, 11);
+    int orderCorrectOrIncorrect = compareBurger(randomBurgerOrder, userBurgerOrder, count, 11);
+    int roundScore = calculateTotals(userBurgerOrder, 11, orderCorrectOrIncorrect);
     return roundScore;
 }
