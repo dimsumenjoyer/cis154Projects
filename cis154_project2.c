@@ -72,7 +72,6 @@ int generateRandomBurger(int* burgerOrder, int cardinalityOfArray)
     for (int i = 0; i < cardinalityOfArray; i++)
     {
         int randomDecision = rand() % 2;
-
         if (randomDecision == 1)
         {
             burgerOrder[ingredientCount++] = i;
