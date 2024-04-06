@@ -214,7 +214,7 @@ double calculateCondiments(int* burgerOrder, int cardinalityOfArray, double scor
 {
     for (int i = 0; i < cardinalityOfArray; i++)
     {
-        if (burgerOrder[i] == 1 || burgerOrder[i] == 2 || burgerOrder == 3)
+        if (burgerOrder[i] == 1 || burgerOrder[i] == 2 || burgerOrder[i] == 3)
         {
             score += 0.39;
         }
