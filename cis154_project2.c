@@ -11,12 +11,20 @@ Project 2
 
 void clearScreen(void);
 int randomDecider(void);
-int* generateRandomBurger(int* randomBurgerOrder, int* count);
+int generateRandomBurger(int* randomBurgerOrder, int cardinalityOfArray);
 int buildBurger(int* array, int cardinalityOfArray);
 void printBurger(int* burgerOrder, int cardinalityOfArray);
 int compareBurger(int* a1, int* a2, int a1Cardinality, int a2Cardinality);
 int calculateTools(int* a1, int a1Cardinality, int orderCorrectOrIncorrect);
 int playRound(void);
+
+int isMascotSpecial(int* burgerOrder, int cardinalityOfArray);
+int isVeggieSpecial(int* burgerOrder, int cardinalityOfArray);
+int isGlutenFreeSpecial(int* burgerOrder, int cardinalityOfArray);
+
+double calculateCondiments(int* burgerOrder, int cardinalityOfArray, double score);
+double calculateVeggies(int* burgerOrder, int cardinalityOfArray, double score);
+double calculateCheese(int* burgerOrder, int cardinalityOfArray, double score);
 
 int main(void) 
 {
@@ -24,15 +32,17 @@ int main(void)
     int totalScore = 0;
     int userInput;
     int iteration = 0;
+    int burgerIngredients[11] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     printf("Want to play? (0 v 1): \n");
     scanf("%d", &userInput);
     while (userInput != 0 && userInput == 1) 
     {
-        if (iteration != 0)
+        iteration++;
+        if (iteration != 1)
         {
             clearScreen();
-            iteration++;
         }
+        printBurger(burgerIngredients, 11);
         totalScore += playRound();
         printf("Total score: %d\n", totalScore);
         printf("Play again? (0 v 1): \n");
@@ -56,21 +66,19 @@ int randomDecider(void)
     return randomNumber;
 }
 
-int* generateRandomBurger(int* randomBurgerOrder, int* count)
+int generateRandomBurger(int* burgerOrder, int cardinalityOfArray)
 {
-    int ingredientsOfBurger[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    int cardinalityOfBurger = sizeof(ingredientsOfBurger) / sizeof(ingredientsOfBurger[0]);
-    *count = 0;
-    for (int i = 0; i < cardinalityOfBurger; i++)
+    int ingredientCount = 0;
+    for (int i = 0; i < cardinalityOfArray; i++)
     {
-        if (randomDecider() == 0)
+        int randomDecision = rand() % 2;
+
+        if (randomDecision == 1)
         {
-            continue;
+            burgerOrder[ingredientCount++] = i;
         }
-        randomBurgerOrder[*count] = ingredientsOfBurger[i];
-        (*count)++;
     }
-    return count;
+    return ingredientCount;
 }
 
 int buildBurger(int* array, int cardinalityOfArray) 
@@ -99,22 +107,14 @@ void printBurger(int* burgerOrder, int cardinalityOfArray)
     {
         switch (burgerOrder[i])
         {
-            case 0: puts("Top Bun"); break;
-            case 1: puts("Mayo"); break;
-            case 2: puts("Mustard"); break;
-            case 3: puts("Ketchup"); break;
-            case 4: puts("Tomato"); break;
-            case 5: puts("Onion"); break;
-            case 6: puts("Lettuce"); break;
-            case 7: puts("Pickle"); break;
-            case 8: puts("Cheese"); break;
-            case 9: puts("Patty"); break;
-            case 10: puts("Bottom Bun"); break;
+            case 0: puts("0 - Top Bun"); break; case 1: puts("1 - Mayo"); break; case 2: puts("2 - Mustard"); break;
+            case 3: puts("3 - Ketchup"); break; case 4: puts("4 - Tomato"); break; case 5: puts("5 - Onion"); break;
+            case 6: puts("6 - Lettuce"); break; case 7: puts("7 - Pickle"); break; case 8: puts("8 - Cheese"); break;
+            case 9: puts("9 - Patty"); break; case 10: puts("10 - Bottom Bun"); break;
             default: puts("If you're reading this, then your code is fucked.");
         }
     }
 }
-
 
 int compareBurger(int* a1, int* a2, int a1Cardinality, int a2Cardinality) 
 {
@@ -135,22 +135,125 @@ int compareBurger(int* a1, int* a2, int a1Cardinality, int a2Cardinality)
 
 int calculateTotals(int* burgerOrder, int cardinalityOfArray, int orderCorrectOrIncorrect) 
 {
-    int score = 0;
-    if (orderCorrectOrIncorrect) 
+    double score = 0;
+    double baseCostOfBurger = 6.99;
+    double condimentsOnBurger = 0.39;
+    double veggiesOnBurger = 0.69;
+    double cheeseOnBurger = 1.29;
+    score += baseCostOfBurger;
+    calculateCondiments(burgerOrder, cardinalityOfArray, score);
+    calculateVeggies(burgerOrder, cardinalityOfArray, score);
+    calculateCheese(burgerOrder, cardinalityOfArray, score);
+    if (isMascotSpecial(burgerOrder, cardinalityOfArray) == 1)
     {
-        score++;
+        puts("Knight Mascot Special!");
+        puts("+ $2.00");
+        score += 2.00;
+    }
+    if (isVeggieSpecial(burgerOrder, cardinalityOfArray) == 1)
+    {
+        puts("Veggie Special!");
+        puts("- $2.00");
+        score -= 2.00;
+    }
+    if (isGlutenFreeSpecial(burgerOrder, cardinalityOfArray) == 1)
+    {
+        puts("Peer Tutoring Gluten Free Special!");
+        puts("- $1.00");
+        score -= 1.00;
+    }
+    return score;
+}
+
+int isMascotSpecial(int* burgerOrder, int cardinalityOfArray)
+{
+    int i0 = burgerOrder[0]; int i1 = burgerOrder[1]; int i2 = burgerOrder[2];
+    int i3 = burgerOrder[3]; int i4 = burgerOrder[4]; int i5 = burgerOrder[5];
+    int i6 = burgerOrder[6]; int i7 = burgerOrder[7]; int i8 = burgerOrder[8];
+    int i9 = burgerOrder[9]; int i10 = burgerOrder[10];
+    for (int i = 0; i < cardinalityOfArray; i++)
+    { // if burger doesn't have all of ingredients return 0, otherwise return 1.
+        if (!((i0 == 0) && (i1 == 1) && (i2 == 2) && (i3 == 3) && (i4 == 4) && (i5 == 5) && (i6 == 6) && (i7 == 7) && (i8 == 8) && (i9 == 9 ) && (i10 == 10)))
+        {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int isVeggieSpecial(int* burgerOrder, int cardinalityOfArray)
+{
+    int ingredientCount = 0;
+    for (int i = 0; i < cardinalityOfArray; i++)
+    {
+        if (burgerOrder[i] != 9)
+        {
+            ingredientCount++;
+        }
+    }
+    if (ingredientCount >= 3)
+    {
+        return 1;
+    }
+    return 0;
+}
+
+int isGlutenFreeSpecial(int* burgerOrder, int cardinalityOfArray)
+{
+    for (int i = 0; i < cardinalityOfArray; i++)
+    {
+        if (burgerOrder[i] != 0 && burgerOrder[i] != 10)
+        {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+double calculateCondiments(int* burgerOrder, int cardinalityOfArray, double score)
+{
+    for (int i = 0; i < cardinalityOfArray; i++)
+    {
+        if (burgerOrder[i] == 1 || burgerOrder[i] == 2 || burgerOrder == 3)
+        {
+            score += 0.39;
+        }
+    }
+    return score;
+}
+
+double calculateVeggies(int* burgerOrder, int cardinalityOfArray, double score)
+{
+    for (int i = 0; i < cardinalityOfArray; i++)
+    {
+        if (burgerOrder[i] == 4 || burgerOrder[i] == 5 || burgerOrder[i] == 6 || burgerOrder[i] == 7)
+        {
+            score += 0.69;
+        }
+    }
+    return score;
+}
+
+double calculateCheese(int* burgerOrder, int cardinalityOfArray, double score)
+{
+    for (int i = 0; i < cardinalityOfArray; i++)
+    {
+        if (burgerOrder[i] == 8)
+        {
+            score += 1.29;
+        }
     }
     return score;
 }
 
 int playRound(void)
 {
-    int randomBurgerOrder[11];
-    int count;
-    generateRandomBurger(randomBurgerOrder, &count);
-    int userBurgerOrder[11];
-    buildBurger(userBurgerOrder, 11);
-    int orderCorrectOrIncorrect = compareBurger(randomBurgerOrder, userBurgerOrder, count, 11);
+    int randomBurgerOrder[11] = {0};
+    int randomBurgerCount = 0;
+    generateRandomBurger(randomBurgerOrder, &randomBurgerCount);
+    int userBurgerOrder[11] = {0};
+    int userBurgerCount = buildBurger(userBurgerOrder, 11);
+    int orderCorrectOrIncorrect = compareBurger(randomBurgerOrder, userBurgerOrder, randomBurgerCount, 11);
     int roundScore = calculateTotals(userBurgerOrder, 11, orderCorrectOrIncorrect);
     return roundScore;
 }
