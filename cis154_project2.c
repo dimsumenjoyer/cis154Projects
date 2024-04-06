@@ -152,7 +152,7 @@ int calculateTotals(int* burgerOrder, int cardinalityOfArray, int orderCorrectOr
     }
     if (isVeggieSpecial(burgerOrder, cardinalityOfArray) == 1)
     {
-        puts("Veggie Special!");
+        puts("Haverhill Sucks - Veggie Special!");
         puts("- $2.00");
         score -= 2.00;
     }
