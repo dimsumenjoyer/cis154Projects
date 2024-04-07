@@ -136,9 +136,6 @@ int calculateTotals(int* burgerOrder, int cardinalityOfArray, int orderCorrectOr
 {
     double score = 0;
     double baseCostOfBurger = 6.99;
-    double condimentsOnBurger = 0.39;
-    double veggiesOnBurger = 0.69;
-    double cheeseOnBurger = 1.29;
     score += baseCostOfBurger;
     calculateCondiments(burgerOrder, cardinalityOfArray, score);
     calculateVeggies(burgerOrder, cardinalityOfArray, score);
