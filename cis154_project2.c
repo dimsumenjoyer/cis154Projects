@@ -33,6 +33,7 @@ int main(void)
 {
     srand(time(NULL));
     int totalScore = 0;
+    int round = 1;
     int userInput;
     int iteration = 0;
     int veryDescriptiveArrayName[11] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
@@ -45,11 +46,16 @@ int main(void)
         {
             clearScreen();
         }
+        printf("Round: %d\n", round);
         printBurger(veryDescriptiveArrayName, 11);
         totalScore += playRound();
         printf("Total score: %d\n", totalScore);
         printf("Play again? (0 v 1): \n");
         scanf("%d", &userInput);
+        if (userInput == 1)
+        {
+            round++;
+        }
     }
     printf("Game over. Final score: %d\n", totalScore);
     return 0;
@@ -169,6 +175,12 @@ int calculateTotals(int* burgerOrder, int cardinalityOfArray, int orderCorrectOr
     else
     {
         puts("Your code is probably fucked.");
+    }
+    if (!orderCorrectOrIncorrect)
+    {
+        puts("We got your order wrong :(");
+        puts("Your burger is now just $2.00.");
+        score = 2.00;
     }
     return score;
 }
