@@ -19,6 +19,8 @@ int compareBurger(int* a1, int* a2, int a1Cardinality, int a2Cardinality);
 int calculateTools(int* a1, int a1Cardinality, int orderCorrectOrIncorrect);
 int playRound(void);
 
+void histrogramFunction(int* array, int* histrogram);
+
 int isMascotSpecial(int* burgerOrder, int cardinalityOfArray);
 int isVeggieSpecial(int* burgerOrder, int cardinalityOfArray);
 int isGlutenFreeSpecial(int* burgerOrder, int cardinalityOfArray);
@@ -72,9 +74,7 @@ int generateRandomBurger(int* burgerOrder, int cardinalityOfArray)
     int ingredientCount = 0;
     for (int i = 0; i < cardinalityOfArray; i++)
     {
-        int randomDecision = rand() % 2;
-
-        if (randomDecision == 1)
+        if (randomDecider())
         {
             burgerOrder[ingredientCount++] = i;
         }
@@ -117,21 +117,27 @@ void printBurger(int* burgerOrder, int cardinalityOfArray)
     }
 }
 
-int compareBurger(int* a1, int* a2, int a1Cardinality, int a2Cardinality) //bugged
+int compareBurger(int* a1, int* a2, int a1Cardinality, int a2Cardinality)
 {
-    int counts[11] = {0};
-    for (int i = 0; i < a1Cardinality; i++) 
+    int histrogram[11] = {0};
+    histrogramFunction(a1, histrogram);
+    histrogramFunction(a2, histrogram);
+    for (int i = 0; i < 11; i++)
     {
-        counts[a1[i]]++;
-    }
-    for (int i = 0; i < a2Cardinality; i++) 
-    {
-        if (--counts[a2[i]] < 0) // ???
+        if (a1[i] != a2[2])
         {
             return 0;
         }
     }
     return 1;
+}
+
+void histrogramFunction(int* array, int* histrogram)
+{
+    for (int i = 0; i < 11; i++)
+    {
+        histrogram[array[i]]++;
+    }
 }
 
 int calculateTotals(int* burgerOrder, int cardinalityOfArray, int orderCorrectOrIncorrect) 
@@ -142,19 +148,19 @@ int calculateTotals(int* burgerOrder, int cardinalityOfArray, int orderCorrectOr
     calculateCondiments(burgerOrder, cardinalityOfArray, score);
     calculateVeggies(burgerOrder, cardinalityOfArray, score);
     calculateCheese(burgerOrder, cardinalityOfArray, score);
-    if (isMascotSpecial(burgerOrder, cardinalityOfArray) == 1)
+    if (isMascotSpecial(burgerOrder, cardinalityOfArray))
     {
         puts("Knight Mascot Special!");
         puts("+ $2.00");
         score += 2.00;
     }
-    else if (isVeggieSpecial(burgerOrder, cardinalityOfArray) == 1)
+    else if (isVeggieSpecial(burgerOrder, cardinalityOfArray))
     {
         puts("Haverhill Sucks - Veggie Special!");
         puts("- $2.00");
         score -= 2.00;
     }
-    else if (isGlutenFreeSpecial(burgerOrder, cardinalityOfArray) == 1) // bugged
+    else if (isGlutenFreeSpecial(burgerOrder, cardinalityOfArray))
     {
         puts("Peer Tutoring Gluten Free Special!");
         puts("- $1.00");
@@ -169,18 +175,7 @@ int calculateTotals(int* burgerOrder, int cardinalityOfArray, int orderCorrectOr
 
 int isMascotSpecial(int* burgerOrder, int cardinalityOfArray)
 {
-    int i0 = burgerOrder[0]; int i1 = burgerOrder[1]; int i2 = burgerOrder[2];
-    int i3 = burgerOrder[3]; int i4 = burgerOrder[4]; int i5 = burgerOrder[5];
-    int i6 = burgerOrder[6]; int i7 = burgerOrder[7]; int i8 = burgerOrder[8];
-    int i9 = burgerOrder[9]; int i10 = burgerOrder[10];
-    for (int i = 0; i < cardinalityOfArray; i++)
-    { // if burger doesn't have all of ingredients return 0, otherwise return 1.
-        if (!((i0 == 0) && (i1 == 1) && (i2 == 2) && (i3 == 3) && (i4 == 4) && (i5 == 5) && (i6 == 6) && (i7 == 7) && (i8 == 8) && (i9 == 9 ) && (i10 == 10)))
-        {
-            return 0;
-        }
-    }
-    return 1;
+    return (cardinalityOfArray == 11);
 }
 
 int isVeggieSpecial(int* burgerOrder, int cardinalityOfArray)
@@ -204,12 +199,12 @@ int isGlutenFreeSpecial(int* burgerOrder, int cardinalityOfArray)
 {
     for (int i = 0; i < cardinalityOfArray; i++)
     {
-        if (burgerOrder[i] != 0 && burgerOrder[i] != 10)
+        if (burgerOrder[i] == 0 || burgerOrder[i] == 10)
         {
-            return 1;
+            return 0;
         }
     }
-    return 0;
+    return 1;
 }
 
 double calculateCondiments(int* burgerOrder, int cardinalityOfArray, double score)
@@ -248,14 +243,13 @@ double calculateCheese(int* burgerOrder, int cardinalityOfArray, double score)
     return score;
 }
 
-int playRound(void) //rewrite
+int playRound(void)
 {
     int randomBurgerOrder[11] = {0};
-    int randomBurgerCount = 0;
-    generateRandomBurger(randomBurgerOrder, &randomBurgerCount);
+    int randomBurger = generateRandomBurger(randomBurgerOrder, 11);
     int userBurgerOrder[11] = {0};
     int userBurgerCount = buildBurger(userBurgerOrder, 11);
-    int orderCorrectOrIncorrect = compareBurger(randomBurgerOrder, userBurgerOrder, randomBurgerCount, 11);
-    int roundScore = calculateTotals(userBurgerOrder, 11, orderCorrectOrIncorrect);
+    int orderCorrectOrIncorrect = compareBurger(userBurgerOrder, randomBurgerOrder, userBurgerCount, randomBurger);
+    int roundScore = calculateTotals(userBurgerOrder, userBurgerCount, orderCorrectOrIncorrect);
     return roundScore;
 }
