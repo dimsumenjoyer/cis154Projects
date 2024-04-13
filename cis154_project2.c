@@ -261,10 +261,10 @@ double calculateCheese(int* burgerOrder, int cardinalityOfArray, double score)
 int playRound(void)
 {
     int randomBurgerOrder[11] = {0};
-    int randomBurger = generateRandomBurger(randomBurgerOrder, 11);
+    int randomBurgerCardinality = generateRandomBurger(randomBurgerOrder, 11);
     int userBurgerOrder[11] = {0};
-    int userBurgerCount = buildBurger(userBurgerOrder, 11);
-    int orderCorrectOrIncorrect = compareBurger(userBurgerOrder, randomBurgerOrder, userBurgerCount, randomBurger);
-    int roundScore = calculateTotals(userBurgerOrder, userBurgerCount, orderCorrectOrIncorrect);
+    int userBurgerCardinality = buildBurger(userBurgerOrder, 11);
+    int orderCorrectOrIncorrect = compareBurger(userBurgerOrder, randomBurgerOrder, userBurgerCardinality, randomBurgerCardinality);
+    int roundScore = calculateTotals(userBurgerOrder, userBurgerCardinality, orderCorrectOrIncorrect);
     return roundScore;
 }
