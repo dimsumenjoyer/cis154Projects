@@ -132,7 +132,7 @@ int compareBurger(int* a1, int* a2, int a1Cardinality, int a2Cardinality)
     histrogramFunction(a2, histrogram);
     for (int i = 0; i < 11; i++)
     {
-        if (a1[i] != a2[2])
+        if (a1[i] != a2[i])
         {
             return 0;
         }
