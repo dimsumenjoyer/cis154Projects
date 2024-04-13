@@ -85,6 +85,8 @@ int generateRandomBurger(int* burgerOrder, int cardinalityOfArray)
             burgerOrder[ingredientCount++] = i;
         }
     }
+    puts("\nRandomized Order.");
+    printBurger(burgerOrder, 11);
     return ingredientCount;
 }
 
