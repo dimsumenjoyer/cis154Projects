@@ -47,6 +47,7 @@ int main(void)
             clearScreen();
         }
         printf("Round: %d\n", round);
+        puts("MENU:");
         printBurger(veryDescriptiveArrayName, 11);
         totalScore += playRound();
         printf("Total score: %d\n", totalScore);
@@ -85,7 +86,7 @@ int generateRandomBurger(int* burgerOrder, int cardinalityOfArray)
             burgerOrder[ingredientCount++] = i;
         }
     }
-    puts("\nCustomer Order:");
+    puts("\nCUSTOMER ORDER:");
     printBurger(burgerOrder, 11);
     return ingredientCount;
 }
