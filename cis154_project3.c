@@ -14,6 +14,7 @@ Project 3
 #define TEXT_BUFFER_SIZE 10000
 
 void readPlainText(char* buffer, char* fileName);
+void readCipherText (char* fileName, int *offSet, int *cardionality);
 void writeCipherText(char* fileName, char* text, int offSet, int cardionality);
 int encryptText(void);
 int decryptText(void);
@@ -44,6 +45,11 @@ void displayMenu(void)
 }
 
 void readPlainText(char* buffer, char* fileName)
+{
+
+}
+
+void readCipherText(char* fileName, int *offSet, int *cardionalityunt)
 {
 
 }
