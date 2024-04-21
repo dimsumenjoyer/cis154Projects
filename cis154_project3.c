@@ -11,11 +11,18 @@ Project 3
 #include <ctype.h>
 #include <stdbool.h>
 
+typedef struct
+{
+    char* fileName, text;
+    int* offSet, cardinality;
+    int offset, cardinality;
+} infoArray_File;
+
 #define TEXT_BUFFER_SIZE 10000
 
 void readPlainText(char* buffer, char* fileName);
-void readCipherText (char* fileName, int *offSet, int *cardionality);
-void writeCipherText(char* fileName, char* text, int offSet, int cardionality);
+void readCipherText (char* fileName, int *offSet, int *cardinality);
+void writeCipherText(char* fileName, char* text, int offSet, int cardinality);
 int encryptText(void);
 int decryptText(void);
 void displayMenu(void);
@@ -36,8 +43,7 @@ void displayMenu(void)
         scanf("%d", &userInput);
         switch(userInput)
         {
-            case 1: puts("Encrypt File"); break;
-            case 2: puts("Decrypt File"); break;
+            case 1: puts("Encrypt File"); break; case 2: puts("Decrypt File"); break; 
             case 3: puts("Program Terminated. Thank you for using the NECC File Encryption and Decryption Program!"); done = true; break;
             default: puts("Error: Invalid Input.\n");
         }
@@ -49,14 +55,14 @@ void readPlainText(char* buffer, char* fileName)
 
 }
 
-void readCipherText(char* fileName, int *offSet, int *cardionalityunt)
+void readCipherText(char* fileName, int *offSet, int *cardinality)
 {
 
 }
 
-void writeCipherText(char* fileName, char* text, int offSet, int cardionality)
+void writeCipherText(char* fileName, char* text, int offSet, int ccardinality)
 {
-
+    //int cardinalityOfStr = strlen(str);
 }
 
 int encryptText(void)
