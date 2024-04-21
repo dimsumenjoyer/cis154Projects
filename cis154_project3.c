@@ -13,7 +13,7 @@ Project 3
 
 typedef struct
 {
-    char* fileName, text;
+    char* fileName, text, buffer;
     int* offSet, cardinality;
     int offset, cardinality;
 } infoArray_File;
