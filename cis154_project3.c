@@ -84,7 +84,26 @@ void writeCipherText(char* fileName, char* text, int offSet, int cardinality)
 
 int encryptText(void)
 {
-
+    \*
+    int cardinalityOfStr = strlen(str);
+    for (int i = 0; i < cardinalityOfStr; i++)
+    {
+        if (isupper(str[i])) 
+        {
+            str[i] = ((str[i] - 'A' + 13) % 26) + 'A';
+        } 
+        else if (islower(str[i])) 
+        {
+            str[i] = ((str[i] - 'a' + 13) % 26) + 'a';
+        }
+        else
+        {
+            puts("Your code is fucked.");
+        }
+        printf("%c\n", str[i]);
+    }
+    \\decoderCaptainCrunch(str);
+    *\
 }
 
 int decryptText(void)
