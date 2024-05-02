@@ -20,7 +20,7 @@ typedef struct
 
 #define TEXT_BUFFER_SIZE 10000
 
-void readPlainText(char* buffer, char* fileName);
+int readPlainText(char* buffer, char* fileName);
 void readCipherText (char* fileName, int *offSet, int *cardinality);
 void writeCipherText(char* fileName, char* text, int offSet, int cardinality);
 int encryptText(void);
@@ -68,9 +68,24 @@ void menuInput(int userInput)
     }
 }
 
-void readPlainText(char* buffer, char* fileName)
+int readPlainText(char* buffer, char* fileName)
 {
     FILE *file = fopen(fileName, "r");
+    if (file == NULL) 
+    {
+        fprintf(stderr, "Error opening file %s\n", fileName);
+        return -1;
+    }
+    int characterCount = 0;
+    int x;
+    while ((x = fgetc(file)) != EOF && num_chars < TEXT_BUFFER_SIZE - 1)
+    {
+        buffer[characterCount++] = x;
+    }
+    buffer[characterCount] = '\0';
+    fclose(file);
+
+    return characterCount;
 }
 
 void readCipherText(char* fileName, int *offSet, int *cardinality)
