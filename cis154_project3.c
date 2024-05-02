@@ -53,7 +53,7 @@ void displayMenu(void)
 
 int readPlainText(char* buffer, char* fileName)
 {
-    FILE *file = fopen(fileName, "r"); // rb -> read file
+    FILE *file = fopen(fileName, "r"); // r -> read file
     fclose(file);
 }
 
