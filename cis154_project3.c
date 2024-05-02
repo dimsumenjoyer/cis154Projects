@@ -46,7 +46,7 @@ void displayMenu(void)
         switch(userInput)
         {
             case 1: puts("Encrypt File"); break; case 2: puts("Decrypt File"); break; 
-            case 3: puts("Program Terminated. Thank you for using the NECC File Encryption and Decryption Program!"); done = true; break;
+            case 2: puts("Program Terminated. Thank you for using the NECC File Encryption and Decryption Program!"); done = true; break;
             default: puts("Error: Invalid Input.\n");
         }
     }
