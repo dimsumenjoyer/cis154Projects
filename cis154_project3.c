@@ -80,10 +80,6 @@ void readCipherText(char* fileName, int *offSet, int *cardinality)
 
 void writeCipherText(char* fileName, char* text, int offSet, int cardinality)
 {
-}
-
-int encryptText(void)
-{
     \*
     int cardinalityOfStr = strlen(str);
     for (int i = 0; i < cardinalityOfStr; i++)
@@ -106,9 +102,12 @@ int encryptText(void)
     *\
 }
 
+int encryptText(void)
+{
+}
+
 int decryptText(void)
 {
-
 }
 
 char* concatenateString(char* s1)
