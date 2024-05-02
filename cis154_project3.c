@@ -95,6 +95,11 @@ void readCipherText(char* fileName, int *offSet, int *cardinality)
 
 void writeCipherText(char* fileName, char* text, int offSet, int cardinality)
 {
+
+}
+
+int encryptText(void)
+{
     \*
     int cardinalityOfStr = strlen(str);
     for (int i = 0; i < cardinalityOfStr; i++)
@@ -115,10 +120,6 @@ void writeCipherText(char* fileName, char* text, int offSet, int cardinality)
     }
     \\decoderCaptainCrunch(str);
     *\
-}
-
-int encryptText(void)
-{
 }
 
 int decryptText(void)
