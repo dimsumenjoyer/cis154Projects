@@ -26,7 +26,6 @@ void writeCipherText(char* fileName, char* text, int offSet, int cardinality);
 int encryptText(void);
 int decryptText(void);
 void displayMenu(void);
-void menuInput(int userInput);
 char* concatenateString(char* s1);
 
 int main(void)
@@ -46,102 +45,61 @@ void displayMenu(void)
         switch(userInput)
         {
             case 1: puts("Encrypt File"); break; case 2: puts("Decrypt File"); break; 
-            case 2: puts("Program Terminated. Thank you for using the NECC File Encryption and Decryption Program!"); done = true; break;
+            case 3: puts("Program Terminated. Thank you for using the NECC File Encryption and Decryption Program!"); done = true; break;
             default: puts("Error: Invalid Input.\n");
         }
-    }
-    menuInput(userInput);
-}
-
-void menuInput(int userInput)
-{
-    char* userInputedFileName;
-    switch(userInput)
-    {
-        case 1: puts("Please enter the name of the plaintext file you wish to encrypt (no extension): ");
-        scanf("%s", &userInputedFileName);
-        char* fileName = concatenateString(userInputedFileName); //fileName.necc
-        break;// encrypt file FILE *file = fopen("numberFile.md", "w");
-
-        case 2:
-        break;
     }
 }
 
 int readPlainText(char* buffer, char* fileName)
 {
-    FILE *file = fopen(fileName, "r");
-    if (file == NULL) 
-    {
-        fprintf(stderr, "Error opening file %s\n", fileName);
-        return -1;
-    }
-    int characterCount = 0;
-    int x;
-    while ((x = fgetc(file)) != EOF && num_chars < TEXT_BUFFER_SIZE - 1)
-    {
-        buffer[characterCount++] = x;
-    }
-    buffer[characterCount] = '\0';
+    FILE *file = fopen(fileName, "r"); // rb -> read file
     fclose(file);
-
-    return characterCount;
 }
 
 void readCipherText(char* fileName, int *offSet, int *cardinality)
 {
-    
+    FILE *file = fopen(fileName, "rb"); // rb -> read binary file
+    fclose(file);
 }
 
 void writeCipherText(char* fileName, char* text, int offSet, int cardinality)
 {
-
+    FILE *file = fopen(fileName, "wb"); // wb -> write to binary file
+    fclose(file);
 }
 
 int encryptText(void)
 {
-    \*
-    int cardinalityOfStr = strlen(str);
-    for (int i = 0; i < cardinalityOfStr; i++)
+    char* fileName;
+    char* encryptedFileName;
+    int offset;
+    int characterCount;
+    char plainText[TEXT_BUFFER_SIZE];
+    puts("Enter the name of the file you want to encrypt: ");
+    scanf("%s", &fileName);
+    puts("Enter the desired name for the encrypted file: ");
+    scanf("%s", &encryptedFileName);
+    puts("Offset for Encryption (Type an integer): ");
+    scanf("%d", offset);
+    characterCount = readPlainText(plainText, fileName);
+    for (int i = 0; i < characterCount; i++)
     {
-        if (isupper(str[i])) 
+        if (isAlpha(plainText[i])) 
         {
-            str[i] = ((str[i] - 'A' + 13) % 26) + 'A';
-        } 
-        else if (islower(str[i])) 
-        {
-            str[i] = ((str[i] - 'a' + 13) % 26) + 'a';
+            plainText[i] = ((plainText[i] - 'A' + offset) % 26) + 'A';
         }
         else
         {
-            puts("Your code is fucked.");
+            puts("Your code is probably fucked.");
         }
-        printf("%c\n", str[i]);
     }
-    \\decoderCaptainCrunch(str);
-    *\
+    char* fileNameWithExtension = strcat(fileName, ".necc");
+    printf("File '%s' has been created & encrypted.", fileName);
+    return 0;
 }
 
 int decryptText(void)
 {
-}
 
-char* concatenateString(char* s1)
-{
-    char* s2 = ".necc";
-    int cardinality = strlen(s1) + strlen(s2);
-    char* fileName = (char*)malloc(cardinality);
-    int currentIndex = 0;
-    for (int i = 0; i < strlen(s1); i++)
-    {
-        fileName[currentIndex] = s1[i];
-        currentIndex++;
-    }
-    for (int i = 0; i < strlen(s2); i++)
-    {
-        fileName[currentIndex] = s2[i];
-        currentIndex++;
-    }
-    fileName[currentIndex] = '\0';
-    return fileName;
 }
