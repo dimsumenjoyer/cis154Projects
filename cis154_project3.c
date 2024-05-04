@@ -21,12 +21,11 @@ typedef struct
 #define TEXT_BUFFER_SIZE 10000
 
 int readPlainText(char* buffer, char* fileName);
-void readCipherText (char* fileName, int *offSet, int *cardinality);
+int* readCipherText (char* fileName, int *offSet, int *cardinality);
 void writeCipherText(char* fileName, char* text, int offSet, int cardinality);
 int encryptText(void);
 int decryptText(void);
-void displayMenu(void);
-char* concatenateString(char* s1);
+void displayMenu(void); 
 
 int main(void)
 {
@@ -54,18 +53,40 @@ void displayMenu(void)
 int readPlainText(char* buffer, char* fileName)
 {
     FILE *file = fopen(fileName, "r"); // r -> read file
+    if (file != NULL)
+    {
+        fread(buffer, sizeof(char), TEXT_BUFFER_SIZE - 1, file);
+        buffer[TEXT_BUFFER_SIZE - 1] = '\0';
+        fclose(file);
+        return 0;
+    }
+    puts("Plain Text File Error");
     fclose(file);
+    return -1;
 }
 
-void readCipherText(char* fileName, int *offSet, int *cardinality)
+int* readCipherText(char* fileName, int *offSet, int *cardinality)
 {
     FILE *file = fopen(fileName, "rb"); // rb -> read binary file
+    if (file != NULL)
+    {
+        char* encryptedTextArray = malloc(sizeof(char) * TEXT_BUFFER_SIZE);
+        fclose(file);
+        return encryptedTextArray;
+    }
+    puts("Cipher Text File Error");
     fclose(file);
 }
 
 void writeCipherText(char* fileName, char* text, int offSet, int cardinality)
 {
     FILE *file = fopen(fileName, "wb"); // wb -> write to binary file
+    if (file != NULL)
+    {
+        puts("Cipher Text File Error");
+        fclose(file);
+    }
+    puts("Cipher Text File Error");
     fclose(file);
 }
 
@@ -101,5 +122,6 @@ int encryptText(void)
 
 int decryptText(void)
 {
+    
 
 }
