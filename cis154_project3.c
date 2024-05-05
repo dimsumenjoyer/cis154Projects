@@ -4,28 +4,20 @@ Victor Van
 C - Professor Penta
 Project 3
 */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include <stdbool.h>
 
-typedef struct
-{
-    char* fileName, text, buffer;
-    int* offSet, cardinality;
-    int offset, cardinality;
-} infoArray_File;
-
 #define TEXT_BUFFER_SIZE 10000
 
 int readPlainText(char* buffer, char* fileName);
-int* readCipherText (char* fileName, int *offSet, int *cardinality);
-void writeCipherText(char* fileName, char* text, int offSet, int cardinality);
+char* readCipherText (char* fileName, int *offSet, int *cardinality);
+void writeCipherText(char* fileName, char* text, int cardinality);
 int encryptText(void);
 int decryptText(void);
-void displayMenu(void); 
+void displayMenu(void);
 
 int main(void)
 {
@@ -43,85 +35,98 @@ void displayMenu(void)
         scanf("%d", &userInput);
         switch(userInput)
         {
-            case 1: puts("Encrypt File"); break; case 2: puts("Decrypt File"); break; 
-            case 3: puts("Program Terminated. Thank you for using the NECC File Encryption and Decryption Program!"); done = true; break;
-            default: puts("Error: Invalid Input.\n");
+            case 1:
+                puts("Encrypt File");
+                encryptText();
+                break; 
+            case 2:
+                puts("Decrypt File");
+                break; 
+            case 3:
+                puts("Program Terminated. Thank you for using the NECC File Encryption and Decryption Program!"); 
+                done = true;
+                break;
+            default:
+                puts("Error: Invalid Input.\n");
         }
     }
 }
 
 int readPlainText(char* buffer, char* fileName)
 {
-    FILE *file = fopen(fileName, "r"); // r -> read file
+    FILE* file = fopen(fileName, "r");
     if (file != NULL)
     {
-        fread(buffer, sizeof(char), TEXT_BUFFER_SIZE - 1, file);
-        buffer[TEXT_BUFFER_SIZE - 1] = '\0';
+        int characterCount = fread(buffer, sizeof(char), TEXT_BUFFER_SIZE - 1, file);
+        buffer[characterCount] = '\0';
         fclose(file);
-        return 0;
+        return characterCount;
     }
-    puts("Plain Text File Error");
-    fclose(file);
-    return -1;
+    else
+    {
+        puts("Plain Text File Error");
+        return -1;
+    }
 }
 
-int* readCipherText(char* fileName, int *offSet, int *cardinality)
+void writeCipherText(char* fileName, char* text, int cardinality)
 {
-    FILE *file = fopen(fileName, "rb"); // rb -> read binary file
+    FILE* file = fopen(fileName, "w");
     if (file != NULL)
     {
-        char* encryptedTextArray = malloc(sizeof(char) * TEXT_BUFFER_SIZE);
+        fwrite(text, sizeof(char), cardinality, file);
         fclose(file);
-        return encryptedTextArray;
     }
-    puts("Cipher Text File Error");
-    fclose(file);
-}
-
-void writeCipherText(char* fileName, char* text, int offSet, int cardinality)
-{
-    FILE *file = fopen(fileName, "wb"); // wb -> write to binary file
-    if (file != NULL)
+    else
     {
         puts("Cipher Text File Error");
-        fclose(file);
     }
-    puts("Cipher Text File Error");
-    fclose(file);
 }
 
 int encryptText(void)
 {
-    char* fileName;
-    char* encryptedFileName;
-    int offset;
-    int characterCount;
+    char fileName[TEXT_BUFFER_SIZE];
+    char encryptedFileName[TEXT_BUFFER_SIZE];
     char plainText[TEXT_BUFFER_SIZE];
+    int offset = 0;
+
     puts("Enter the name of the file you want to encrypt: ");
-    scanf("%s", &fileName);
+    scanf("%s", fileName);
     puts("Enter the desired name for the encrypted file: ");
-    scanf("%s", &encryptedFileName);
+    scanf("%s", encryptedFileName);
     puts("Offset for Encryption (Type an integer): ");
-    scanf("%d", offset);
-    characterCount = readPlainText(plainText, fileName);
-    for (int i = 0; i < characterCount; i++)
-    {
-        if (isAlpha(plainText[i])) 
+    scanf("%d", &offset);
+
+    int characterCount = readPlainText(plainText, fileName);
+    if (characterCount > 0)
+    {        
+        for (int i = 0; i < characterCount; i++)
         {
-            plainText[i] = ((plainText[i] - 'A' + offset) % 26) + 'A';
+            if (isalpha(plainText[i]))
+            {
+                if (isupper(plainText[i]))
+                {
+                    plainText[i] = ((plainText[i] - 'A' + offset) % 26) + 'A';
+                }
+                else if (islower(plainText[i]))
+                {
+                    plainText[i] = ((plainText[i] - 'a' + offset) % 26) + 'a';
+                }
+            }
         }
-        else
-        {
-            puts("Your code is probably fucked.");
-        }
+
+        writeCipherText(encryptedFileName, plainText, characterCount);
+        printf("File '%s' has been created & encrypted.\n", encryptedFileName);
+        return 0;
     }
-    char* fileNameWithExtension = strcat(fileName, ".necc");
-    printf("File '%s' has been created & encrypted.", fileName);
-    return 0;
+    else
+    {
+        puts("Encryption failed due to read error.");
+        return -1;
+    }
 }
 
 int decryptText(void)
 {
     
-
 }
