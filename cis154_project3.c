@@ -58,7 +58,8 @@ int readPlainText(char* buffer, char* fileName)
     FILE* file = fopen(fileName, "r");
     if (file != NULL)
     {
-        int characterCount = fread(buffer, sizeof(char), TEXT_BUFFER_SIZE - 1, file);
+        //int characterCount = fread(buffer, sizeof(char), TEXT_BUFFER_SIZE - 1, file);
+        
         buffer[characterCount] = '\0';
         fclose(file);
         return characterCount;
