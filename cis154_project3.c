@@ -31,7 +31,7 @@ void displayMenu(void)
     int userInput;
     while (!done)
     {
-        puts("Welcome to the NECC File Encryption and Decryption Program!\nPlease select an option:\n1. Encrypt File\n2. Decrypt File\n3. Exit\nEnter your choice: ");
+        puts("NECC File Encryption & Decryption Program:\nPlease select an option:\n1. Encrypt File\n2. Decrypt File\n3. Exit\nEnter your choice: ");
         scanf("%d", &userInput);
         switch(userInput)
         {
@@ -41,9 +41,10 @@ void displayMenu(void)
                 break; 
             case 2:
                 puts("Decrypt File");
+                //decryptText();
                 break; 
             case 3:
-                puts("Program Terminated. Thank you for using the NECC File Encryption and Decryption Program!"); 
+                puts("NECC File Encryption & Decryption Program Terminated."); 
                 done = true;
                 break;
             default:
@@ -67,6 +68,11 @@ int readPlainText(char* buffer, char* fileName)
         puts("Plain Text File Error");
         return -1;
     }
+}
+
+char* readCipherText(char* filename, int *offset, int *cardinality)
+{
+    return;
 }
 
 void writeCipherText(char* fileName, char* text, int cardinality)
@@ -128,5 +134,5 @@ int encryptText(void)
 
 int decryptText(void)
 {
-    
+
 }
