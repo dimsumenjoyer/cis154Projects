@@ -102,7 +102,7 @@ char* readCipherText(char* fileName, int *offset, int *cardinality)
     }
 }
 
-void writeCipherText(char* fileName, char* text, int offset, int cardinality)
+void writeCipherText(char* fileName, char* text, int offset, int cardinality) //unfinished
 {
     FILE* file = fopen(fileName, "wb"); // -> writes to binary file
 
@@ -163,5 +163,45 @@ int encryptText(void)
 
 int decryptText(void)
 {
+    char fileName[TEXT_BUFFER_SIZE];
+    char decryptedFileName[TEXT_BUFFER_SIZE];
+    char plainText[TEXT_BUFFER_SIZE];
+    int offset = 0;
+
+    puts("Enter the name of the file you want to encrypt: ");
+    scanf("%s", fileName);
+    puts("Enter the desired name for the encrypted file: ");
+    scanf("%s", decryptedFileName);
+    puts("Offset for Encryption (Type an integer): ");
+    scanf("%d", &offset);
+
+    int characterCount = readPlainText(plainText, fileName);
+
+    if (characterCount > 0)
+    {        
+        for (int i = 0; i < characterCount; i++)
+        {
+            if (isalpha(plainText[i]))
+            {
+                if (isupper(plainText[i]))
+                {
+                    plainText[i] = ((plainText[i] - 'A' - offset) % 26) + 'A';
+                }
+                else if (islower(plainText[i]))
+                {
+                    plainText[i] = ((plainText[i] - 'a' - offset) % 26) + 'a';
+                }
+            }
+        }
+
+        writeCipherText(decryptedFileName, plainText, offset, characterCount);
+        printf("File '%s' has been created & decrypted.\n", decryptedFileName);
+        return 0;
+    }
+    else
+    {
+        puts("Decryption failed due to read error.");
+        return -1;
+    }
 
 }
