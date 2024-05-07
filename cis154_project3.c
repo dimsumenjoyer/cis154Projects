@@ -14,7 +14,7 @@ Project 3
 
 int readPlainText(char* buffer, char* fileName);
 char* readCipherText (char* fileName, int *offSet, int *cardinality);
-void writeCipherText(char* fileName, char* text, int cardinality);
+void writeCipherText(char* fileName, char* text, int offset, int cardinality);
 int encryptText(void);
 int decryptText(void);
 void displayMenu(void);
@@ -29,10 +29,12 @@ void displayMenu(void)
 {
     bool done = false;
     int userInput;
+
     while (!done)
     {
         puts("NECC File Encryption & Decryption Program:\nPlease select an option:\n1. Encrypt File\n2. Decrypt File\n3. Exit\nEnter your choice: ");
         scanf("%d", &userInput);
+
         switch(userInput)
         {
             case 1:
@@ -56,11 +58,18 @@ void displayMenu(void)
 int readPlainText(char* buffer, char* fileName)
 {
     FILE* file = fopen(fileName, "r");
+    char characterInFile;
+    int characterCount = 0;
+    bool done = false;
+
     if (file != NULL)
     {
-        //int characterCount = fread(buffer, sizeof(char), TEXT_BUFFER_SIZE - 1, file);
-        
-        buffer[characterCount] = '\0';
+        while ((characterInFile = fgetc(file)) != EOF)
+        {
+            buffer[characterCount] = characterInFile;
+            characterCount++;
+        }
+        buffer[characterCount] = '\0'; 
         fclose(file);
         return characterCount;
     }
@@ -71,14 +80,32 @@ int readPlainText(char* buffer, char* fileName)
     }
 }
 
-char* readCipherText(char* filename, int *offset, int *cardinality)
+char* readCipherText(char* fileName, int *offset, int *cardinality)
 {
-    return;
+    FILE* file = fopen(fileName, "rb");
+    const char* fileExtension = ".necc";
+    int cardinalityOfFileName = strlen(fileName);
+    int cardinalityOfExtension = strlen(fileExtension);
+    
+    if (strcmp(fileName + cardinalityOfFileName - cardinalityOfExtension, fileExtension) == 0) // if fileName has .necc extension
+    {
+        char* encryptedData = malloc(TEXT_BUFFER_SIZE * sizeof(char));
+        *cardinality = fread(encryptedData, sizeof(char), TEXT_BUFFER_SIZE, file);
+        *offset += *cardinality; // updates offset
+        fclose(file);
+        return encryptedData;
+    }
+    else
+    {
+        puts("Error: File doesn't have .necc extension.");
+        return NULL;
+    }
 }
 
-void writeCipherText(char* fileName, char* text, int cardinality)
+void writeCipherText(char* fileName, char* text, int offset, int cardinality)
 {
-    FILE* file = fopen(fileName, "w");
+    FILE* file = fopen(fileName, "wb"); // -> writes to binary file
+
     if (file != NULL)
     {
         fwrite(text, sizeof(char), cardinality, file);
@@ -105,6 +132,7 @@ int encryptText(void)
     scanf("%d", &offset);
 
     int characterCount = readPlainText(plainText, fileName);
+
     if (characterCount > 0)
     {        
         for (int i = 0; i < characterCount; i++)
@@ -122,7 +150,7 @@ int encryptText(void)
             }
         }
 
-        writeCipherText(encryptedFileName, plainText, characterCount);
+        writeCipherText(encryptedFileName, plainText, offset, characterCount);
         printf("File '%s' has been created & encrypted.\n", encryptedFileName);
         return 0;
     }
