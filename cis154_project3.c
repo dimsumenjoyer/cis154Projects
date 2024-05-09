@@ -4,6 +4,7 @@ Victor Van
 C - Professor Penta
 Project 3
 */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -19,6 +20,19 @@ int encryptText(void);
 int decryptText(void);
 void displayMenu(void);
 
+void makePlainText(void);
+
+typedef struct 
+{
+    char fileName[TEXT_BUFFER_SIZE];
+    char plainText[TEXT_BUFFER_SIZE];
+    char encryptedFileName[TEXT_BUFFER_SIZE];
+    char decryptedFileName[TEXT_BUFFER_SIZE];
+    int offset, characterCount;
+
+} fileInfo;
+
+
 int main(void)
 {
     displayMenu();
@@ -32,18 +46,23 @@ void displayMenu(void)
 
     while (!done)
     {
-        puts("NECC File Encryption & Decryption Program:\nPlease select an option:\n1. Encrypt File\n2. Decrypt File\n3. Exit\nEnter your choice: ");
+        puts("NECC File Encryption & Decryption Program:\nPlease select an option:\n0. Create file\n1. Encrypt File\n2. Decrypt File\n3. Exit\nEnter your choice: ");
         scanf("%d", &userInput);
 
         switch(userInput)
         {
+            case 0:
+                puts("Create file");
+                makePlainText();
+                break;
+
             case 1:
                 puts("Encrypt File");
                 encryptText();
                 break; 
             case 2:
                 puts("Decrypt File");
-                //decryptText();
+                decryptText();
                 break; 
             case 3:
                 puts("NECC File Encryption & Decryption Program Terminated."); 
@@ -55,12 +74,39 @@ void displayMenu(void)
     }
 }
 
+void makePlainText(void)
+{
+    char fileNameWithoutExtension[TEXT_BUFFER_SIZE];
+    const char* fileExtension = ".md";
+    char plainText[TEXT_BUFFER_SIZE];
+    puts("Plain Text File Name: ");
+    scanf("%s", fileNameWithoutExtension);
+    
+    if (strlen(fileNameWithoutExtension) >= TEXT_BUFFER_SIZE - strlen(fileExtension) - 1) 
+    {
+        puts("Error: Filename too long.");
+        return;
+    }
+    strcpy(fileNameWithoutExtension, fileNameWithoutExtension);
+    strcat(fileNameWithoutExtension, fileExtension);
+    FILE* file = fopen(fileNameWithoutExtension, "w");
+
+    if (file == NULL) 
+    {
+        puts("Error opening file.");
+        return;
+    }
+    puts("Write stuff into file: ");
+    scanf("%s", plainText);
+    fwrite(plainText, sizeof(char), strlen(plainText), file);
+    fclose(file);
+}
+
 int readPlainText(char* buffer, char* fileName)
 {
     FILE* file = fopen(fileName, "r");
     char characterInFile;
     int characterCount = 0;
-    bool done = false;
 
     if (file != NULL)
     {
@@ -83,32 +129,50 @@ int readPlainText(char* buffer, char* fileName)
 char* readCipherText(char* fileName, int *offset, int *cardinality)
 {
     FILE* file = fopen(fileName, "rb");
-    const char* fileExtension = ".necc";
-    int cardinalityOfFileName = strlen(fileName);
-    int cardinalityOfExtension = strlen(fileExtension);
-    
-    if (strcmp(fileName + cardinalityOfFileName - cardinalityOfExtension, fileExtension) == 0) // if fileName has .necc extension
+    if (file == NULL)
     {
-        char* encryptedData = malloc(TEXT_BUFFER_SIZE * sizeof(char));
-        *cardinality = fread(encryptedData, sizeof(char), TEXT_BUFFER_SIZE, file);
-        *offset += *cardinality; // updates offset
-        fclose(file);
-        return encryptedData;
-    }
-    else
-    {
-        puts("Error: File doesn't have .necc extension.");
+        puts("Error: Unable to open file.");
         return NULL;
     }
+    const char* fileExtension = ".bin";
+    int fileNameLength = strlen(fileName);
+    int extensionLength = strlen(fileExtension);
+
+    if (fileNameLength < extensionLength ||
+        strcmp(fileName + fileNameLength - extensionLength, fileExtension) != 0)
+    {
+        fclose(file);
+        puts("Error: File does not have the correct extension.");
+        return NULL;
+    }
+    char* encryptedData = malloc(TEXT_BUFFER_SIZE * sizeof(char));
+    if (encryptedData == NULL)
+    {
+        fclose(file);
+        puts("Error: Memory allocation failed.");
+        return NULL;
+    }
+
+    *cardinality = fread(encryptedData, sizeof(char), TEXT_BUFFER_SIZE, file);
+    *offset = encryptedData[4];
+    
+    fclose(file);
+    return encryptedData;
 }
 
-void writeCipherText(char* fileName, char* text, int offset, int cardinality) //unfinished
+void writeCipherText(char* fileName, char* text, int offset, int cardinality)
 {
     FILE* file = fopen(fileName, "wb"); // -> writes to binary file
 
+    // necc offset cardinality text
+    char textArray[TEXT_BUFFER_SIZE + 4] = "NECC";
+    textArray[4] = offset;
+    textArray[5] = cardinality;
+    strncat(textArray, text, TEXT_BUFFER_SIZE);
+
     if (file != NULL)
     {
-        fwrite(text, sizeof(char), cardinality, file);
+        fwrite(textArray, sizeof(char), TEXT_BUFFER_SIZE, file);
         fclose(file);
     }
     else
@@ -123,9 +187,13 @@ int encryptText(void)
     char encryptedFileName[TEXT_BUFFER_SIZE];
     char plainText[TEXT_BUFFER_SIZE];
     int offset = 0;
+    char* fileExtension = ".md";
+    int cardinality;
 
     puts("Enter the name of the file you want to encrypt: ");
     scanf("%s", fileName);
+
+    strcat(fileName, fileExtension);
     puts("Enter the desired name for the encrypted file: ");
     scanf("%s", encryptedFileName);
     puts("Offset for Encryption (Type an integer): ");
@@ -149,7 +217,6 @@ int encryptText(void)
                 }
             }
         }
-
         writeCipherText(encryptedFileName, plainText, offset, characterCount);
         printf("File '%s' has been created & encrypted.\n", encryptedFileName);
         return 0;
@@ -167,41 +234,57 @@ int decryptText(void)
     char decryptedFileName[TEXT_BUFFER_SIZE];
     char plainText[TEXT_BUFFER_SIZE];
     int offset = 0;
+    int cardinality = TEXT_BUFFER_SIZE;
 
-    puts("Enter the name of the file you want to encrypt: ");
+    puts("Enter the name of the file you want to decrypt: ");
     scanf("%s", fileName);
-    puts("Enter the desired name for the encrypted file: ");
+    puts("Enter the desired name for the decrypted file: ");
     scanf("%s", decryptedFileName);
-    puts("Offset for Encryption (Type an integer): ");
+    puts("Offset for Decryption (Type an integer): ");
     scanf("%d", &offset);
 
-    int characterCount = readPlainText(plainText, fileName);
+    FILE* file = fopen(fileName, "rb");
+    if (file == NULL)
+    {
+        puts("Error: Unable to open file for decryption."); // VSCode showx error here, but not below -> makes pointer from integer without cast
+        return -1;
+    }
 
-    if (characterCount > 0)
-    {        
+    char arrayText[TEXT_BUFFER_SIZE];
+    fread(arrayText, sizeof(char), TEXT_BUFFER_SIZE, file);
+    fclose(file);
+
+    offset = arrayText[4];
+    cardinality = arrayText[5];
+
+    char* cipherText = readCipherText(fileName, &offset, &cardinality); // *makes pointer from integer without cast*
+    if (cipherText != NULL && cardinality > 0)
+    {
+        int characterCount = cipherText[5];
         for (int i = 0; i < characterCount; i++)
         {
-            if (isalpha(plainText[i]))
+            if (isalpha(cipherText[i]))
             {
-                if (isupper(plainText[i]))
+                if (isupper(cipherText[i]))
                 {
-                    plainText[i] = ((plainText[i] - 'A' - offset) % 26) + 'A';
+                    cipherText[i] = ((cipherText[i] - 'A' - offset + 26) % 26) + 'A';
                 }
-                else if (islower(plainText[i]))
+                else if (islower(cipherText[i]))
                 {
-                    plainText[i] = ((plainText[i] - 'a' - offset) % 26) + 'a';
+                    cipherText[i] = ((cipherText[i] - 'a' - offset + 26) % 26) + 'a';
                 }
             }
         }
 
-        writeCipherText(decryptedFileName, plainText, offset, characterCount);
-        printf("File '%s' has been created & decrypted.\n", decryptedFileName);
+        writeCipherText(decryptedFileName, cipherText, offset, characterCount);
+        printf("File '%s' has been decrypted and saved as '%s'.\n", fileName, decryptedFileName);
+        printf("Decrypted Text:\n%s\n", cipherText);
+        free(cipherText);
         return 0;
     }
     else
     {
-        puts("Decryption failed due to read error.");
+        puts("Decryption failed due to read error or invalid file format.");
         return -1;
     }
-
 }
